@@ -133,7 +133,7 @@ jobs:
         version: latest   
     #run OPA tests    
     - name: Run OPA Tests
-      run: opa test opa/policies/*.rego -v     
+      run: tfplan | grep '^{.*}$' > tfplan.json && opa exec --decision deny --bundle opa/policies/*.rego "tfplan.json" --format json > result.json     
     
     # Terraform Apply
     - name: Terraform Apply
