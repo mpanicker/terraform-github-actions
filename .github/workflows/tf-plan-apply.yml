@@ -63,7 +63,7 @@ jobs:
       id: tf-plan
       run: |
         export exitcode=0
-        terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+        terraform plan -detailed-exitcode -no-color -out tfplan && terraform show -json tfplan | grep '^{.*}$' > tfplan.json
 
         echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
         
@@ -106,21 +106,22 @@ jobs:
         echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
       
     # If this is a PR post the changes
-    - name: Push Terraform Output to PR
-      if: github.ref != 'refs/heads/main'
-      uses: actions/github-script@v7
-      env:
-        SUMMARY: "${{ steps.tf-plan-string.outputs.summary }}"
-      with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const body = `${process.env.SUMMARY}`;
-            github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: body
-            })
+    # - name: Push Terraform Output to PR
+    #   if: github.ref != 'refs/heads/main'
+    #   uses: actions/github-script@v7
+    #   env:
+    #     SUMMARY: "${{ steps.tf-plan-string.outputs.summary }}"
+    #   with:
+    #       github-token: ${{ secrets.GITHUB_TOKEN }}
+    #       script: |
+    #         const body = `${process.env.SUMMARY}`;
+    #         github.rest.issues.createComment({
+    #             issue_number: context.issue.number,
+    #             owner: context.repo.owner,
+    #             repo: context.repo.repo,
+    #             body: body
+    #         })
+    
     # Download saved plan from artifacts  
     - name: Download Terraform Plan
       uses: actions/download-artifact@v4
@@ -133,7 +134,7 @@ jobs:
         version: latest   
     #run OPA tests    
     - name: Run OPA Tests
-      run: tfplan | grep '^{.*}$' > tfplan.json && opa exec --decision deny --bundle opa/policies/*.rego "tfplan.json" --format json > result.json     
+      run: opa exec --decision deny --bundle opa/policies/*.rego "tfplan.json" --format json > result.json     
     
     # Terraform Apply
     - name: Terraform Apply
