@@ -1,10 +1,10 @@
-package terraform.policies.test
+package policies.test
 
 import rego.v1
 
-import data.terraform.policies.friday_deploys
+import data.policies.friday_deploys
 
 test_friday_deploys if {
-	terraform.policies.friday_deploys.deny
+	policies.friday_deploys.deny
 }
 
