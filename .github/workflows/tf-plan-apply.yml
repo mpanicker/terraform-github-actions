@@ -126,7 +126,15 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: tfplan
-
+    #Setup OPA    
+    - name: Setup OPA
+      uses: open-policy-agent/setup-opa@v2
+      with:
+        version: latest   
+    #run OPA tests    
+    - name: Run OPA Tests
+      run: opa test opa/policies/*.rego -v     
+    
     # Terraform Apply
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan        
