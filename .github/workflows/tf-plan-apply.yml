@@ -134,7 +134,7 @@ jobs:
         version: latest   
     #run OPA tests    
     - name: Run OPA Tests
-      run: opa exec --decision deny --bundle opa/policies/*.rego "tfplan.json" --format json > result.json     
+      run: opa exec --decision deny --bundle ${{ github.workspace }}/opa/policies/ "tfplan.json" --format json > result.json     
     
     # Terraform Apply
     - name: Terraform Apply

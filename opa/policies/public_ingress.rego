@@ -1,6 +1,6 @@
 package terraform.policies.public_ingress
 
-import input.plan as tfplan
+import tfplan.json as tfplan
 
 deny[msg] {
   r := tfplan.resource_changes[_]
