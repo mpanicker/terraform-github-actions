@@ -22,7 +22,25 @@ provider "azurerm" {
 }
 
 # Define any Azure resources to be created here. A simple resource group is shown here as a minimal example.
-resource "azurerm_resource_group" "rg-aks" {
-  name     = var.resource_group_name
-  location = var.location
+# resource "azurerm_resource_group" "rg-aks" {
+#   name     = var.resource_group_name
+#   location = var.location
+# }
+data "azurerm_resource_group" "storm-cloud-rg" {
+  name = "mp-test-rg"
+}
+
+resource "azurerm_storage_account" "opa-test" {
+  name                     = "opatestdte"
+  resource_group_name      = data.azurerm_resource_group.storm-cloud-rg.name
+  location                 = data.azurerm_resource_group.storm-cloud-rg.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  public_network_access_enabled = false
+}
+
+resource "azurerm_storage_container" "opa-test-storage-container" {
+  name                  = "content"
+  storage_account_name  = azurerm_storage_account.opa-test.name
+  container_access_type = "private"
 }
