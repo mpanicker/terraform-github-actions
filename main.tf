@@ -31,7 +31,7 @@ data "azurerm_resource_group" "storm-cloud-rg" {
 }
 
 resource "azurerm_storage_account" "opa-test" {
-  name                          = "opa_test_dte"
+  name                          = "opatestdte1234"
   resource_group_name           = data.azurerm_resource_group.storm-cloud-rg.name
   location                      = data.azurerm_resource_group.storm-cloud-rg.location
   account_tier                  = "Standard"
